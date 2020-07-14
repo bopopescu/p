@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -10,11 +10,11 @@ app.config['SECRET_KEY'] = 'mysecret'
 db = SQLAlchemy(app)
 
 
-class Prueba(db.Model):
+class TipoUsuarios(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     texto = db.Column(db.String(50))
 
-    us = db.relationship('Usuarios', backref='us', lazy='dynamic')
+    usuarios = db.relationship('Usuarios', backref='tipo', lazy='dynamic')
 
     def __init__(self, texto):
         self.texto = texto
@@ -23,15 +23,21 @@ class Prueba(db.Model):
 class Usuarios(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     usuario = db.Column(db.String(50))
-    externa = db.Column(db.Integer, db.ForeignKey('prueba.id'))
+    externa = db.Column(db.Integer, db.ForeignKey('tipo_usuarios.id'))
 
-    def __init__(self, usuario, externa):
+    def __init__(self, usuario):
         self.usuario = usuario
 
 
 @app.route('/')
 def index():
     return 'Hola'
+
+
+@app.route('/prueba')
+def prueba():
+    us = Usuarios.query.all()
+    return render_template('db.html', us=us)
 
 
 if __name__ == "__main__":
