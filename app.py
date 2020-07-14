@@ -9,26 +9,30 @@ app.config['SECRET_KEY'] = 'mysecret'
 
 db = SQLAlchemy(app)
 
+
 class Prueba(db.Model):
-    id = db.Column(db.Integer, primary_key = True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     texto = db.Column(db.String(50))
 
     us = db.relationship('Usuarios', backref='us', lazy='dynamic')
 
-    def __init__(self,texto):
+    def __init__(self, texto):
         self.texto = texto
 
+
 class Usuarios(db.Model):
-    id = db.Column(db.Integer, primary_key = True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     usuario = db.Column(db.String(50))
     externa = db.Column(db.Integer, db.ForeignKey('prueba.id'))
 
-    def __init__(self,usuario,externa):
+    def __init__(self, usuario, externa):
         self.usuario = usuario
+
 
 @app.route('/')
 def index():
     return 'Hola'
+
 
 if __name__ == "__main__":
     app.run(debug=True)
